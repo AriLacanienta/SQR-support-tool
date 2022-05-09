@@ -1,0 +1,314 @@
+{ "name": "PeopleSoft SQR",
+	"fileTypes": ["sqr","sqc"],
+	"foldingStartMarker": "(?i:begin-procedure)",
+	"foldingStopMarker" : "(?i:end-procedure)",
+	"patterns": [
+	  {"include" : "#comment"},
+	  {"include" : "#include"},
+	  {"include" : "#SQR_commands"},
+	  {
+		"name": "meta.entity.name.function.procedure.sqr",
+		"comment" : [
+		  "TODO: local reserved variables must be referenced like #_sql-error",
+		  "TODO: LET (& other commands) line wrapping",
+		  "TODO: change to entity.name.section.* once color is supported",
+		  "TODO: better name for local modifier (other than entity.other.attribute-name)"
+		],
+		"begin": "(?i:^\\s*(begin[-_]procedure)\\s+([-\\w_]+)(\\s+local|\\s*\\(.*\\))?)",
+		"beginCaptures" : {
+		  "1" : {"name" : "keyword.control.procedureHead.sqr"},
+		  "2" : {"name" : "entity.name.function.procedureHead.sqr"},
+		  "3" : {"patterns" : [
+			{
+			  "match" : "local",
+			  "name" : "entity.name.attribute-name.sqr"
+			},
+			{"include" : "#variables"},
+			{
+			  "match" : "(:)(([\\$#%@&][\\w][_\\w\\.-]*)|(\\{.*\\}))",
+			  "captures" : {
+				"1" : {"name" : "variable.other.sqr"},
+				"2" : {"patterns" : [ {"include" : "#variables"} ] }
+			  }
+			}
+		  ]}
+		},
+		"patterns": [
+		  { "include" : "#comment"},
+		  { "include" : "#SQR_commands"},
+		  { "include" : "#select"},
+		  { "include" : "$self"}
+		],
+		"end": "(?i:end[-_]procedure)",
+		"endCaptures" : {
+		  "0" : {"name" : "keyword.control.function.procedureEnd.sqr"}
+		}
+	  }
+	],
+	"repository": {
+		"select" : {
+			"name" : "meta.entity.name.function.select",
+			"begin" : "(?i:begin-select)",
+			"beginCaptures" : {
+		  		"0" : {"name" : "entity.name.function.selectHead.sqr"}
+			},
+			"end" : "(?i:end-select)",
+			"endCaptures" : {
+		  		"0" : {"name" : "entity.name.function.selectEnd.sqr"}
+			},
+			"patterns" : [
+		  		{"include" : "#variables"},
+		  		{"include" : "#SQR_commands"},
+		  		{"include" : "source.oraclesql"}
+			]
+		},
+	  "SQR_commands" : {
+		"patterns" : [
+		  {"comment" : "#add"},
+		  {"include" : "#do"},
+		  {"include" : "#if"},
+		  {"include" : "#let"},
+		  {"include" : "#show"},
+		  {"include" : "#while"}
+		]
+	  },
+	  "add" : {
+		"comment" : "ADD{src_num_lit | _var |  _col} TO dst_num_var  [ROUND=nn]",
+		"match" : "(?i:add\\s+([^\\s]+)\\s+to\\s+(TODO)",
+		"patterns" : [
+		  {"include" : "#num_lit"},
+		  {"include" : "#variables"},
+		  {"include" : "#comment"}
+		]
+	  },
+	  "do" : {
+		"patterns" : [
+		  {"include" : "#do_args"},
+		  {"include" : "#do_basic"},
+		  {"include" : "#comment"}
+		],
+		"repository" : {    
+		  "do_args" : {
+			"begin" : "(?i:(do))\\s([-_\\w]+)\\s*\\(",
+			"end" : "\\)",
+			"captures" : {
+			  "1" : { "name" : "keyword.control.sqr"},
+			  "2" : { "name" : "entity.name.function.procedureName.sqr"}
+			},
+			"patterns" : [ 
+			  { "include" : "#expressions" }
+			]
+		  },
+		  "do_basic" : {
+			"match" : "(?i:(do))\\s([-_\\w]+)",
+			"captures" : {
+			  "1" : { "name" : "keyword.control.sqr"},
+			  "2" : { "name" : "entity.name.function.procedureName.sqr"}
+			}
+		  }
+		}
+	  },
+	  "if" : {
+		"begin" : "(?i:if)",
+		"beginCaptures" : {
+		  "0" : { "name" : "keyword.control.sqr"}
+		},
+		"end" : "(?i:end-if)",
+		"endCaptures" : {
+		  "0" : { "name" : "keyword.control.sqr"}
+		},
+		"patterns" : [ 
+		  { "match" : "(?i:else)",
+			"name" : "keyword.control.sqr"},
+		  {"include" : "#SQR_commands" },
+		  {"include" : "#expressions" },
+		  {"include" : "$self" }
+		]
+	  },
+	  "let" : {
+		"match" : "^[\\s]*(?i:(let)) (.*?)=?\\s*(.*)",
+		"captures" : {
+		  "1" : { "name" : "keyword.other.sqr"},
+		  "2" : { "patterns" : [ 
+			{ "include" : "#variables"},
+			{ "include" : "#functions"}
+			]},
+		  "3" : { "patterns" : [ 
+			{ "include" : "#expressions"},
+			{ "include" : "#comment"}
+			]}
+		} 
+	  },
+	  "show" : {
+		"match" : "(?i:(show))(.*)",
+		"captures" : {
+		  "1" : { "name" : "keyword.control.sqr"},
+		  "2" : { "patterns" : [
+			  {"include" : "#comment"},
+			  {"include" : "#expressions"},
+			  { "name" : "invalid.illegal.sqr",
+				"match" : "\\|\\|" }
+		  ]}
+		}
+	  },
+	  "while" : {
+		"patterns" : [ 
+			{"include" : "#while_body"},
+			{"include" : "#break"}
+		],
+		"repository" : {
+			"while_body" : {
+				"begin" : "(?i:while)",
+				"beginCaptures" : {
+				  "0" : { "name" : "keyword.control.sqr"}
+				},
+				"end" : "(?i:end-while)",
+				"endCaptures" : {
+				  "0" : { "name" : "keyword.control.sqr"}
+				},
+				"patterns" : [
+					{"include" : "#SQR_commands" },
+					{"include" : "#expressions" },
+					{"include" : "$self" }
+				]
+			},
+			"break" : {
+				"match" : "(?i:break)",
+				"name" : "keyword.control.break.sqr",
+				"comment" : "This command is used inside a WHILE ... END-WHILE loop or within an EVALUATE command."				
+			}
+		}
+	  },
+	  "comment" : {
+		"name" : "comment.line.sqr",
+		  "match" : "(!)(?!= ).*$\n?",
+		  "comment": "Comments begin with a bang"
+	  },
+	  "variables" : { 
+		"patterns" : [ 
+			{"include" : "#reserved_variables" },
+			{"include" : "#column_variable"},
+			{"include" : "#basic_variable"},
+			{"include" : "#substitution_variables"}
+		  ],
+		"repository" : {
+		  "reserved_variables" : {
+			"name" : "variable.language.reserved.sqr",
+			"match" : "(?i:#current-column|\\$current-date|#current-line|#end-file|#page-count|#return-status|#sql-count|\\$sql-error|#sql-status|\\$sqr-encoding-console|{sqr-encoding-console}|\\$sqr-encoding-database|{sqr-encoding-database}|\\$sqr-encoding-file-input|{sqr-encoding-file-input}|\\$sqr-encoding-file-output|{sqr-encoding-file-output}|\\$sqr-encoding-report-output|{sqr-encoding-report-output}|\\$sqr-encoding-source|{sqr-encoding-source}|\\$sqr-database|{sqr-database}|\\$sqr-dbcs|{sqr-dbcs}|\\$sqr-encoding|{sqr-encoding}|\\$sqr-hostname|{sqr-hostname}|\\$sqr-locale|#sqr-max-lines|#sqr-max-columns|#sqr-pid|\\$sqr-platform|{sqr-platform}|\\$sqr-program|\\$sqr-ver|\\$username|\\$sqr-report)"
+		  },
+		  "column_variable" : {
+			"name" : "variable.language.column.sqr",
+			"match" : "&[\\w][_\\w\\.-]*"
+		  },
+		  "substitution_variables" : {
+			"name" : "variable.language.substitution.sqr",
+			"match" : "\\{.*\\}"
+		  },
+		  "basic_variable" : {
+			"match" : "([\\$#%@])([\\w][_\\w-]*)",
+			"captures" : {
+			  "1" : { "name" : "storage.type.sqr" },
+			  "2" : { "name" : "variable.parameter.sqr"}
+			},
+			"comment" : "This could be expanded for each variable type (numeric|string|list|etc.)"
+		  }
+		}
+	  },
+	  "include" : {
+		"match" : "(?i:(#include)) ('.*')",
+		"captures" : {
+		  "1" : { "name" : "keyword.control.import.sqr"},
+		  "2" : { "patterns" : [ {"include" : "#str_lit"}]}
+		}
+	  },
+	  "str_lit" : {
+		"name" : "string.quoted.sqr",
+		"match" : "'.*?'"
+	  },
+	  "num_lit" : {
+		"name" : "constant.numeric.sqr",
+		"match" : "[+-]?\\d+(\\.\\d+)?(E\\d+)?",
+		"comment" : "TODO: lowercase e? (scientific notation)"
+	  },
+	  "functions" : {
+		"begin" : "(\\w++)\\s*\\(",
+		"beginCaptures" : {
+		  "1" : { "patterns" : [
+			{"include" : "#num_function"},
+			{"include" : "#file_function"},
+			{"include" : "#misc_function"}
+		  ]}
+		},
+		"end" : "\\)",
+		"patterns" : [
+		  {"include" : "#functions"},
+		  {"include" : "#expressions"}
+		]
+	  },
+	  "num_function" : {
+		"match" : "(?i:abs|acos|asin|atan|ceil|cos|cosh|deg|e10|exp|floor|log|log10|mod|power|rad|round|sign|sin|sinh|sqrt|tan|tanh|trunc)",
+		"captures" : {
+		  "0" : {"name" : "entity.name.function.numeric.sqr"}
+		}
+	  },
+	  "file_function" : {
+		"match" : "(?i:delete|exists|rename)",
+		"captures" : {
+		  "0" : {"name" : "entity.name.function.file.sqr"}
+		}
+	  },
+	  "misc_function" : {
+		"match" : "(?i:array|ascii|asciic|chr|cond|dateadd|datediff|datenow|datetostr|edit|getenv|instr|instrb|isblank|isnull|length|lengthb|lengthp|lengtht|lower|lpad|ltrim|nvl|range|replace|roman|rpad|rtrim|strtodate|substr|substrb|substrp|substrt|to_char|to_multi_byte|to_number|to_single_byte|translate|transform|unicode|upper|wrapdepth)",
+		"captures" : {
+		  "0" : {"name" : "entity.name.function.misc.sqr"}
+		}
+	  },
+	  "expressions" : {
+		"patterns" : [
+		  {"include" : "#operand"},
+		  {"include" : "#operator"}
+		]
+	  },
+	  "operand" : {
+		"patterns" :[
+		  {"include" : "#num_lit"},
+		  {"include" : "#str_lit"},
+		  {"include" : "#variables"},
+		  {"include" : "#functions"}
+		]
+	  },
+	  "operator" : {
+		"patterns" : [
+		  {"include" : "#arithmetic_operator"},
+		  {"include" : "#comparison_operator"},
+		  {"include" : "#logical_operator"},
+		  {"include" : "#str_operator"}
+		]
+	  },
+	  "str_operator" : {
+		"name" : "keyword.operator.concatenate.sqr",
+		"match" : "\\|\\|"
+	  },
+	  "arithmetic_operator" : {
+		"name" : "keyword.operator.arithmetic.sqr",
+		"match" : "(\\^|\\*|\\/|%|\\+|-)"
+	  },
+	  "comparison_operator" : {
+		"name" : "keyword.operator.comparison.sqr",
+		"match" : "(>|<|>=|<=|<>|!=|=)"
+	  },
+	  "logical_operator" : {
+		"name" : "keyword.operator.logical.sqr",
+		"match" : "\\b(not|and|or|xor)\\b"
+	  },
+	  "return_variables" : {
+		"match" : "(:)(([\\$#%@&][\\w][_\\w\\.-]*)|(\\{.*\\}))",
+		"captures" : {
+		  "0" : {"name" : "variable.other.sqr"},
+		  "2" : {"patterns" : [ {"include" : "#variables"} ] }
+		}
+	  }
+	},
+	"scopeName": "source.sqr"
+  }
+	

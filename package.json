@@ -1,0 +1,25 @@
+{
+    "name": "sqr-support-tool",
+    "displayName": "sqrt",
+    "description": "SQR Language support",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.65.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "sqr",
+            "aliases": ["SQR", "sqr"],
+            "extensions": [".sqr",".sqc",".SQR",".SQC"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "sqr",
+            "scopeName": "source.sqr",
+            "path": "./syntaxes/sqr.tmlanguage.json"
+        }]
+    }
+}
