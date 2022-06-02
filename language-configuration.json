@@ -7,7 +7,15 @@
     "brackets": [
         ["{", "}"],
         ["[", "]"],
-        ["(", ")"]
+        ["(", ")"],
+        ["begin-procedure","end-procedure"],
+        ["begin-select","end-select"],
+        ["begin-sql","end-sql"],
+        ["evaluate","end-evaluate"],
+        ["if","end-if"],
+        ["#ifdef","#end-if"],
+        ["#ifdef","#endif"],
+        ["while","end-while"]
     ],
     // symbols that are auto closed when typing
     "autoClosingPairs": [

@@ -4,50 +4,159 @@
 	"foldingStopMarker" : "(?i:end-procedure)",
 	"patterns": [
 	  {"include" : "#comment"},
-	  {"include" : "#include"},
-	  {"include" : "#SQR_commands"},
-	  {
-		"name": "meta.entity.name.function.procedure.sqr",
-		"comment" : [
-		  "TODO: local reserved variables must be referenced like #_sql-error",
-		  "TODO: LET (& other commands) line wrapping",
-		  "TODO: change to entity.name.section.* once color is supported",
-		  "TODO: better name for local modifier (other than entity.other.attribute-name)"
-		],
-		"begin": "(?i:^\\s*(begin[-_]procedure)\\s+([-\\w_]+)(\\s+local|\\s*\\(.*\\))?)",
-		"beginCaptures" : {
-		  "1" : {"name" : "keyword.control.procedureHead.sqr"},
-		  "2" : {"name" : "entity.name.function.procedureHead.sqr"},
-		  "3" : {"patterns" : [
-			{
-			  "match" : "local",
-			  "name" : "entity.name.attribute-name.sqr"
-			},
-			{"include" : "#variables"},
-			{
-			  "match" : "(:)(([\\$#%@&][\\w][_\\w\\.-]*)|(\\{.*\\}))",
-			  "captures" : {
-				"1" : {"name" : "variable.other.sqr"},
-				"2" : {"patterns" : [ {"include" : "#variables"} ] }
-			  }
-			}
-		  ]}
-		},
-		"patterns": [
-		  { "include" : "#comment"},
-		  { "include" : "#SQR_commands"},
-		  { "include" : "#select"},
-		  { "include" : "$self"}
-		],
-		"end": "(?i:end[-_]procedure)",
-		"endCaptures" : {
-		  "0" : {"name" : "keyword.control.function.procedureEnd.sqr"}
-		}
-	  }
+	  {"include" : "##define"},
+	  {"include" : "##include"},
+	  {"include" : "#setup"},
+	  {"include" : "#program"},
+	  {"include" : "#heading"},
+	  {"include" : "#footing"},
+	  {"include" : "#procedure"}
 	],
 	"repository": {
-		"select" : {
-			"name" : "meta.entity.name.function.select",
+		"program": {
+			"name": "meta.entity.name.function.program.sqr",
+			"comment": [
+				"REQUIRED SECTION",
+				"Syntax: BEGIN-PROGRAM {SQR-commands} END-PROGRAM"
+			],
+			"begin" : "(?i:begin-program)",
+			"beginCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"end" : "(?i:end-program)",
+			"endCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"patterns": [
+				{"include": "#SQR_commands"}
+			]
+		},
+		"setup": { 
+			"name" : "metha.entity.name.funcion.setup.sqr",
+		  "comment" : [
+			  "BEGIN-SETUP END-SETUP",
+			  "TODO: all of the included commands, plus special cases"
+			],
+		  "begin" : "(?i:begin-setup)",
+		  "beginCaptures" : {
+			  "0" : { "captures" : "keyword.control.procedureHead.sqr"}
+		  },
+		  "end" : "(?i:end-setup)",
+		  "endCaptures" : {
+			  "0" : { "captures" : "keyword.control.procedureHead.sqr"}
+		  },
+		  "patterns": [
+			  { "include" : "#comment"},
+			  { "include" : "#ask"},
+			  { "include" : "#begin_sql"},
+			  { "include" : "#create_array",
+				"comment" : "TODO: (The CREATE-ARRAY command can also be used in the other sections of an SQR program.)"},
+			  { "include" : "#declare_chart"},
+			  { "include" : "#declare_image"},
+			  { "include" : "#declare_layout"},
+			  { "include" : "#declare_printer"},
+			  { "include" : "#declare_procedure"},
+			  { "include" : "#declare_report"},
+			  { "include" : "#declare_variable",
+				"comment" : "TODO: (The DECLARE-VARIABLE command can also be used in LOCAL procedures.)"},
+			  { "include" : "#declare_toc"},
+			  { "include" : "#load_lookup",
+				"comment" : "(The BEGIN-SQL command can also be used in BEGIN-PROCEDURE paragraphs.)"},
+			  { "include" : "#use",
+				"comment" : "(Microsoft SQL Server only.)"}
+			]
+		},
+		"heading": {
+			"name": "meta.entity.name.function.program.sqr",
+			"comment": [
+				"TODO: Not yet implemented",
+				"Syntax: BEGIN-HEADING heading_lines_int_lit [FOR-REPORTS=(ALL| report_name1[, report_namei]...)] [FOR-TOCS=(ALL|toc_name1[, toc_namei]...)] [NAME={footing_name}] END-HEADING"
+			],
+			"begin" : "(?i:begin-heading)",
+			"beginCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"end" : "(?i:end-heading)",
+			"endCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"patterns": [
+				{"include": "#SQR_commands"}
+			]
+		},
+		"footing": {
+			"name": "meta.entity.name.function.program.sqr",
+			"comment": [
+				"TODO: Not yet implemented",
+				"Syntax: BEGIN-FOOTING footing_lines_int_lit [FOR-REPORTS=(ALL|report_name1[,report_namei]...)] [FOR-TOCS=(ALL|toc_name1[,toc_namei]...)] [NAME={footing_name}] END-FOOTING"
+			],
+			"begin" : "(?i:begin-footing)",
+			"beginCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"end" : "(?i:end-footing)",
+			"endCaptures" : {
+				"0" : { "captures" : "keyword.control.procedureHead.sqr"}
+			},
+			"patterns": [
+				{"include": "#SQR_commands"}
+			]
+		},
+		"procedure" : {
+		  "name": "meta.entity.name.function.procedure.sqr",
+		  "comment" : [
+			"TODO: local reserved variables must be referenced like #_sql-error",
+			"TODO: LET (& other commands) line wrapping",
+			"TODO: change to entity.name.section.* once color is supported",
+			"TODO: better name for local modifier (other than entity.other.attribute-name)",
+			"TODO: implement args version using do_args like method",
+			"Syntax: BEGIN-PROCEDURE procedure_name [LOCAL|(arg1 [, argi]...)] END-PROCEDURE"
+		  ],
+		  "begin": "(?i:^\\s*(begin-procedure)\\s+([-\\w_]+)(\\s+local|\\s*\\(.*\\))?)",
+		  "beginCaptures" : {
+			"1" : {"name" : "keyword.control.procedureHead.sqr"},
+			"2" : {"name" : "entity.name.function.procedureHead.sqr"},
+			"3" : {"patterns" : [
+			  {
+				"match" : "local",
+				"name" : "entity.name.attribute-name.sqr"
+			  },
+			  {"include" : "#variables"},
+			  {
+				"match" : "(:)(([\\$#%@&][\\w][_\\w\\.-]*)|(\\{.*\\}))",
+				"captures" : {
+				  "1" : {"name" : "variable.other.sqr"},
+				  "2" : {"patterns" : [ {"include" : "#variables"} ] }
+				}
+			  }
+			]}
+		  },
+		  "patterns": [
+			{ "include" : "#comment"},
+			{ "include" : "#begin_sql"},
+			{ "include" : "#begin_select"},
+			{ "include" : "#SQR_commands"},
+			{ "include" : "#declare_variable"},
+			{ "include" : "$self"}
+		  ],
+		  "end": "(?i:end-procedure)",
+		  "endCaptures" : {
+			"0" : {"name" : "keyword.control.function.procedureEnd.sqr"}
+		  }
+		},
+		"begin_select" : {
+			"comment" : ["BEGIN-SELECT[DISTINCT][-Cnn][-Bnn][-XP][-NR][-SORTnn] [-LOCK{RR|CS|RO|RL|XX}][-DBdatabase] [-DBconnectionstring] [LOOPS=nn][ON-ERROR=procedure[(arg1[,argi]...)]] {column} [&synonym] {expression &synonym} {[$columnname] &synonym = (char | number | date)} [SQR commands] FROM {table,...|[table:$tablename]}                 [additional SQL]                 [$variable] END-SELECT",
+			"TODO: Dynamic SQL. Whatever you call the square bracket stuff: ",
+			"begin-select           loops=100",
+			"[$col_var_char]        &col1=char",
+			"[$col_var_num]       &col2=number",
+			"cust_id                &id=number",
+			"from [$table_name]",
+			"[$where clause]",
+			"[$order_by_clause]",
+			"end-select"
+		],
+			"name" : "meta.entity.name.function.select.sqr",
 			"begin" : "(?i:begin-select)",
 			"beginCaptures" : {
 		  		"0" : {"name" : "entity.name.function.selectHead.sqr"}
@@ -62,24 +171,70 @@
 		  		{"include" : "source.oraclesql"}
 			]
 		},
+		"begin_sql" : {
+			"comment" : "BEGIN-SQL[-Cnn][-XP][-NR][-SORTnn] [-LOCK{RR|CS|RO|RL|XX}] [-DBdatabase][-DBconnectionstring]    [ON-ERROR=procedure[(arg1[,argi]]...)]! In the SETUP section    |[ON-ERROR={STOP|WARN|SKIP}](insetup)! Outside the SETUP section END-SQL",
+			"name" : "meta.entity.name.section.sql.sqr",
+			"begin" : "(?i:begin-sql)",
+			"beginCaptures" : {
+				"0" : { "patterns" : [
+					{
+						"match" : "(?i:begin-sql)",
+					 	"name" : "entity.name.section.sql.sqr"
+					}
+				]}
+			},
+			"end" : "(?i:end-sql)",
+			"endCaptures" : {
+				"0" : { "name" : "entity.name.section.sql.sqr"}
+			},
+			"patterns" : [
+				{"include" : "#comment"},
+				{"include" : "#variables"},
+				{"include" : "source.oraclesql"}
+			]
+		},
 	  "SQR_commands" : {
 		"patterns" : [
-		  {"comment" : "#add"},
+		  {"include" : "#add"},
+		  {"include" : "#break"},
+		  {"include" : "#paragraphs"},
+		  {"include" : "#display"},
 		  {"include" : "#do"},
+		  {"include" : "#evaluate"},
+		  {"include" : "#goto"},
 		  {"include" : "#if"},
+		  {"include" : "##ifdef"},
+		  {"include" : "##include"},
 		  {"include" : "#let"},
+		  {"include" : "#move"},
 		  {"include" : "#show"},
-		  {"include" : "#while"}
+		  {"include" : "#while"},
+		  {"include" : "#write"}
 		]
 	  },
 	  "add" : {
 		"comment" : "ADD{src_num_lit | _var |  _col} TO dst_num_var  [ROUND=nn]",
-		"match" : "(?i:add\\s+([^\\s]+)\\s+to\\s+(TODO)",
+		"match" : "((?i:add|subtract))(.*)((?i:to|from))(.*)(?i:round=\\d+)?",
+		"captures": {
+			"1": {"name": "entity.name.function.sqr"},
+			"2": {"patterns": [
+				{"include": "#num_lit"},
+				{"include": "#any_var"},
+				{"include": "#any_col"}
+				]},
+			"3": {"name": "entity.name.function.sqr"},
+			"4": {"patterns": [{"include": "#any_var"}]}
+		},
 		"patterns" : [
 		  {"include" : "#num_lit"},
 		  {"include" : "#variables"},
 		  {"include" : "#comment"}
 		]
+	  },
+	  "break" : {
+		  "match" : "(?i:break)",
+		  "name" : "keyword.control.break.sqr",
+		  "comment" : "Causes an exit from within an EVALUATE or WHILE command. "				
 	  },
 	  "do" : {
 		"patterns" : [
@@ -89,7 +244,7 @@
 		],
 		"repository" : {    
 		  "do_args" : {
-			"begin" : "(?i:(do))\\s([-_\\w]+)\\s*\\(",
+			"begin" : "(?i:(do))\\s([-\\w]+)\\s*\\(",
 			"end" : "\\)",
 			"captures" : {
 			  "1" : { "name" : "keyword.control.sqr"},
@@ -106,8 +261,58 @@
 			  "2" : { "name" : "entity.name.function.procedureName.sqr"}
 			}
 		  }
-		}
+		}		
 	  },
+	  "evaluate" : {
+		"begin": "(?i:evaluate)",
+		"beginCaptures": {
+			"0": {"name": "keyword.control.evaluate.sqr"}
+		},
+		"end": "(?i:end-evaluate)",
+		"endCaptures": {
+			"0": {"name": "keyword.control.evaluate.sqr"}	
+		},
+		"patterns": [
+			{	"match": "(?i:when) (>|<|>=|<=|<>|!=|=)",
+			 	"captures": {
+					"0": { "name": "keyword.control.evaluate.match.sqr "},
+					"1": { "patterns": [ 
+							{ "include": "#comparison_operator" } 
+						] 
+					}
+				}
+			},
+			{"match": "(?i:when-other)",
+			 "name": "keyword.control.evaluate.match.sqr "
+			},
+			{"include": "#any_lit"},
+			{"include": "#variables"},
+			{"include": "#any_col"},
+			{"include": "#SQR_commands"},
+			{"include": "#break"}
+		]
+	  },
+	  "goto" : {
+		"patterns" : [
+			{ "include" : "#goto_cmd"},
+			{ "include" : "#goto_lbl"}
+		],
+		"repository" : {
+			"goto_cmd" : {
+				"match" : "(?i:(goto) (\\w+))",
+				"captures" : {
+					"1" : { "name" : "keyword.control.goto.sqr"},
+					"2" : { "name" : "keyword.control.label.sqr"}
+				}
+			},
+			"goto_lbl" : {
+				"match" : "(^\\s*\\w+):",
+				"captures" : {
+					"1" : { "name" : "keyword.control.label.sqr"}
+				}
+			}
+		}
+	},
 	  "if" : {
 		"begin" : "(?i:if)",
 		"beginCaptures" : {
@@ -125,6 +330,24 @@
 		  {"include" : "$self" }
 		]
 	  },
+	  "#ifdef": {
+		  "comment": [
+			  "Syntax: #IFDEF substitution_variable",
+			  "Note: compiler directive"
+		  ],
+		  "begin": "(?i:(#ifdef)\\s+([^\\s]+))",
+		  "beginCaptures" : {
+			  "1": {"name": "keyword.control.compiler.sqr"},
+			  "2": {"name": "variable.language.substitution.sqr"}
+		  },
+		  "end": "(?i:#end-?if)",
+		  "endCaptures": {
+			  "0": {"name": "keyword.control.compiler.sqr"}
+		  },
+		  "patterns": [
+			  {"include": "#SQR_commands"}
+		  ]
+	  },
 	  "let" : {
 		"match" : "^[\\s]*(?i:(let)) (.*?)=?\\s*(.*)",
 		"captures" : {
@@ -139,91 +362,122 @@
 			]}
 		} 
 	  },
+	  "move": {
+		  "comment": "MOVE {src_any_lit|_var|_col} TO dst_any_var [[:$]format_mask|NUMBER|MONEY|DATE]",
+		  "match": "((?i:move))(.*)((?i:to))(.*)",
+		  "captures": {
+			  "1": {"name": "entity.name.function.sqr"},
+			  "2": {"patterns": [
+				{"include": "#any_lit"},
+				{"include": "#any_col"},
+				{"include": "#any_var"}
+			  ]},
+			  "3": {"name": "entity.name.function.sqr"},
+			  "4": {"patterns": [{"include": "#any_var"}]}
+		  }
+	  },
+	  "display" : {
+		  "comment" : "DISPLAY {any_lit|_var|_col} [[:$]edit_mask|NUMBER|MONEY|DATE][NOLINE]",
+		  "match": "(?i:(display))\\s*(.*)",
+		  "captures": {
+			  "1": {"name": "entity.name.function"},
+			  "2": { "patterns": [
+				  {"include": "#any_lit"},
+				  {"include": "#variables"}
+			  ]}
+		  }
+	  },
 	  "show" : {
+		"comment" : "SHOW[cursor_position] [CLEAR-SCREEN|CS|CLEAR-LINE|CL][any_lit|_var|_col] [EDITedit_mask|NUMBER|MONEY|DATE][BOLD][BLINK] [UNDERLINE][REVERSE][NORMAL][BEEP][NOLINE]...",
 		"match" : "(?i:(show))(.*)",
 		"captures" : {
-		  "1" : { "name" : "keyword.control.sqr"},
+		  "1" : { "name" : "entity.name.function.sqr"},
 		  "2" : { "patterns" : [
 			  {"include" : "#comment"},
-			  {"include" : "#expressions"},
 			  { "name" : "invalid.illegal.sqr",
-				"match" : "\\|\\|" }
+				"match" : "\\|\\|" },
+			  {"include" : "#expressions"}
 		  ]}
 		}
 	  },
 	  "while" : {
-		"patterns" : [ 
-			{"include" : "#while_body"},
-			{"include" : "#break"}
-		],
-		"repository" : {
-			"while_body" : {
-				"begin" : "(?i:while)",
-				"beginCaptures" : {
-				  "0" : { "name" : "keyword.control.sqr"}
-				},
-				"end" : "(?i:end-while)",
-				"endCaptures" : {
-				  "0" : { "name" : "keyword.control.sqr"}
-				},
-				"patterns" : [
-					{"include" : "#SQR_commands" },
-					{"include" : "#expressions" },
-					{"include" : "$self" }
-				]
-			},
-			"break" : {
-				"match" : "(?i:break)",
-				"name" : "keyword.control.break.sqr",
-				"comment" : "This command is used inside a WHILE ... END-WHILE loop or within an EVALUATE command."				
-			}
-		}
-	  },
+		"begin" : "(?i:while)",
+		"beginCaptures" : {
+		  "0" : { "name" : "keyword.control.sqr"}
+		},
+		"end" : "(?i:end-while)",
+		"endCaptures" : {
+		  "0" : { "name" : "keyword.control.sqr"}
+		},
+		"patterns" : [
+			{"include" : "#SQR_commands" },
+			{"include" : "#expressions" },
+			{"include" : "#break" }
+		]
+	},
 	  "comment" : {
 		"name" : "comment.line.sqr",
-		  "match" : "(!)(?!= ).*$\n?",
+		  "match" : "(!).*$\n?",
 		  "comment": "Comments begin with a bang"
 	  },
 	  "variables" : { 
 		"patterns" : [ 
 			{"include" : "#reserved_variables" },
-			{"include" : "#column_variable"},
-			{"include" : "#basic_variable"},
+			{"include" : "#any_col"},
+			{"include" : "#any_var"},
 			{"include" : "#substitution_variables"}
-		  ],
-		"repository" : {
-		  "reserved_variables" : {
-			"name" : "variable.language.reserved.sqr",
-			"match" : "(?i:#current-column|\\$current-date|#current-line|#end-file|#page-count|#return-status|#sql-count|\\$sql-error|#sql-status|\\$sqr-encoding-console|{sqr-encoding-console}|\\$sqr-encoding-database|{sqr-encoding-database}|\\$sqr-encoding-file-input|{sqr-encoding-file-input}|\\$sqr-encoding-file-output|{sqr-encoding-file-output}|\\$sqr-encoding-report-output|{sqr-encoding-report-output}|\\$sqr-encoding-source|{sqr-encoding-source}|\\$sqr-database|{sqr-database}|\\$sqr-dbcs|{sqr-dbcs}|\\$sqr-encoding|{sqr-encoding}|\\$sqr-hostname|{sqr-hostname}|\\$sqr-locale|#sqr-max-lines|#sqr-max-columns|#sqr-pid|\\$sqr-platform|{sqr-platform}|\\$sqr-program|\\$sqr-ver|\\$username|\\$sqr-report)"
-		  },
-		  "column_variable" : {
-			"name" : "variable.language.column.sqr",
-			"match" : "&[\\w][_\\w\\.-]*"
-		  },
-		  "substitution_variables" : {
-			"name" : "variable.language.substitution.sqr",
-			"match" : "\\{.*\\}"
-		  },
-		  "basic_variable" : {
-			"match" : "([\\$#%@])([\\w][_\\w-]*)",
-			"captures" : {
-			  "1" : { "name" : "storage.type.sqr" },
-			  "2" : { "name" : "variable.parameter.sqr"}
-			},
-			"comment" : "This could be expanded for each variable type (numeric|string|list|etc.)"
-		  }
-		}
+		  ]
 	  },
-	  "include" : {
-		"match" : "(?i:(#include)) ('.*')",
+	  "reserved_variables" : {
+		"name" : "variable.language.reserved.sqr",
+		"match" : "(?i:#current-column|\\$current-date|#current-line|#end-file|#page-count|#return-status|#sql-count|\\$sql-error|#sql-status|\\$sqr-encoding-console|{sqr-encoding-console}|\\$sqr-encoding-database|{sqr-encoding-database}|\\$sqr-encoding-file-input|{sqr-encoding-file-input}|\\$sqr-encoding-file-output|{sqr-encoding-file-output}|\\$sqr-encoding-report-output|{sqr-encoding-report-output}|\\$sqr-encoding-source|{sqr-encoding-source}|\\$sqr-database|{sqr-database}|\\$sqr-dbcs|{sqr-dbcs}|\\$sqr-encoding|{sqr-encoding}|\\$sqr-hostname|{sqr-hostname}|\\$sqr-locale|#sqr-max-lines|#sqr-max-columns|#sqr-pid|\\$sqr-platform|{sqr-platform}|\\$sqr-program|\\$sqr-ver|\\$username|\\$sqr-report)"
+	  },
+	  "any_col" : {
+		"name" : "variable.language.column.sqr",
+		"match" : "&[\\w][_\\w\\.-]*"
+	  },
+	  "substitution_variables" : {
+		"name" : "variable.language.substitution.sqr",
+		"match" : "\\{[^\\s]+\\}"
+	  },
+	  "any_var" : {
+		"match" : "([\\$#%@])([\\w][_\\w-]*)|(\\{[^\\s]+\\})",
 		"captures" : {
-		  "1" : { "name" : "keyword.control.import.sqr"},
-		  "2" : { "patterns" : [ {"include" : "#str_lit"}]}
+		  "1" : { "name" : "storage.type.sqr" },
+		  "2" : { "name" : "variable.parameter.sqr"},
+		  "3" : { "patterns" : [
+			  {"include": "#substitution_variables"}
+		  ]}
+		},
+		"comment" : "This could be expanded for each variable type (num|txt|list|etc.)"
+	  },
+	  "#include" : {
+	    "comment": ["#INCLUDE filename_lit", "compile time command"],
+		"match" : "(#(?i:include))\\s*('.*')",
+		"captures" : {
+	  	  "1" : { "name" : "keyword.control.import.sqr"},
+		  "2" : { "patterns" : [ {"include" : "#txt_lit"}]}
 		}
 	  },
-	  "str_lit" : {
+	  "#define" : {
+	    "comment": ["#DEFINE substitution_variable value", "compile time command",
+		"TODO: match these substitution variables later (language server?)"],
+		"match" : "(#(?i:define))\\s+([^\\s]*)\\s+([^\\s]+)",
+		"captures" : {
+	  	  "1" : { "name" : "keyword.control.import.sqr"},
+	  	  "2" : { "name" : "variable.language.substitution.sqr"},
+		  "3" : { "patterns" : [ {"include" : "#any_lit"}]}
+		}
+	  },
+	  "any_lit": {
+		  "patterns": [
+			  {"include": "#txt_lit"},
+			  {"include": "#num_lit"}
+		  ]
+	  },
+	  "txt_lit" : {
 		"name" : "string.quoted.sqr",
-		"match" : "'.*?'"
+		"match" : "'([^!]|!!)*?'"
 	  },
 	  "num_lit" : {
 		"name" : "constant.numeric.sqr",
@@ -271,8 +525,8 @@
 	  },
 	  "operand" : {
 		"patterns" :[
-		  {"include" : "#num_lit"},
-		  {"include" : "#str_lit"},
+		  {"include" : "#comment"},
+		  {"include" : "#any_lit"},
 		  {"include" : "#variables"},
 		  {"include" : "#functions"}
 		]
@@ -307,6 +561,42 @@
 		  "0" : {"name" : "variable.other.sqr"},
 		  "2" : {"patterns" : [ {"include" : "#variables"} ] }
 		}
+	  },
+	  "position": {
+		  "match": "\\(([^,]+?)?(,[^,]+?)?(,[^,]+?)?\\)",
+		  "comment": [
+			  "TODO: test whitespace rules",
+			  "TODO: regex specificity (replace '[^,]+?' (x3) with num_lit regex?)",
+			  "TODO: do numeric variables work as well?",
+			  "TODO: test (,,) is valid"
+		  ],
+		  "patterns": [
+			  {"include": "#num_lit"},
+			  {"include": "#any_var"}
+		  ]
+	  },
+	  "write": {
+		  "comment": [
+			  "Syntax: WRITE {filenum_lit|_var|_col} FROM {{{txt_lit|_var|_col}|{date_var|_col}|num_col} [:len_int_lit]}|{num_lit|_var:len_int_lit}}... [STATUS=status_num_var]"
+		  ],
+		  "match": "(?i:(write)\\s+([^\\s]+?)\\s+(from)\\s+(.*))",
+		  "captures": {
+			"1": {"name": "entity.name.function.sqr"},
+			"2": {"patterns": [
+				{"include": "#any_var"},
+				{"include": "#num_lit"}
+			]},
+			"3": {"name": "entity.name.function.sqr"},
+			"4": {"patterns": [
+				{"include": "#any_var"},
+				{"include": "#any_lit"}
+			]}
+		},
+		  "patterns": [
+			  {"include":"#comment"},
+			  {"include":"#any_var"},
+			  {"include":"#any_lit"}
+		  ]
 	  }
 	},
 	"scopeName": "source.sqr"
